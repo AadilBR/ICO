@@ -57,10 +57,6 @@ contract Calculator {
         return nb1 % nb2;
     }
 
-    function owner() public view returns (address) {
-        return _owner;
-    }
-
     function price() public pure returns (uint256) {
         return _PRICE;
     }
