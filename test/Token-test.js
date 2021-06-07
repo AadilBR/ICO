@@ -24,7 +24,7 @@ describe('TokenToken', function () {
     it(`Should have total supply ${INIT_SUPPLY.toString()}`, async function () {
       expect(await token.totalSupply()).to.equal(ethers.utils.parseEther(INIT_SUPPLY.toString()));
     });
-    it('Should mint total supply to owner', async function () {
+    it('Should mint and tansfert total supply to owner', async function () {
       expect(await token.balanceOf(owner.address)).to.equal(ethers.utils.parseEther(INIT_SUPPLY.toString()));
     });
   });

@@ -18,7 +18,14 @@ describe('ICO', function () {
     await token.connect(owner).approve(ico.address, INIT_SUPPLY);
   });
 
-  describe('Deployment', function () {});
+  describe('Deployment', function () {
+    it('should display the address of the token contract', async function () {
+      expect(await ico.tokenContract()).to.equal(token.address);
+    });
+    it('Should set balance of ico to 0', async function () {
+      expect(await ico.ICOBalance()).to.equal(0);
+    });
+  });
 
   describe('Withdraw function', function () {
     it('Should revert if not owner', async function () {

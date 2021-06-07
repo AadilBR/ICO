@@ -16,11 +16,8 @@ contract Calculator {
         _owner = owner_;
     }
 
-    modifier paymentValue() {
-        require(
-            _token.balanceOf(msg.sender) >= 1 ether,
-            "Calculator: you do not have enough token to use this function"
-        );
+    modifier payPerCalculate() {
+        require(_token.balanceOf(msg.sender) >= 1 ether, "Calculator: Insufficient funds");
         require(
             _token.allowance(msg.sender, address(this)) >= 1 ether,
             "Calculator: you need to approve this smart contract for at least 1 token before using it"
@@ -34,29 +31,29 @@ contract Calculator {
         return nb1 + nb2;
     }
 
-    function sub(int256 nb1, int256 nb2) public paymentValue returns (int256) {
+    function sub(int256 nb1, int256 nb2) public payPerCalculate returns (int256) {
         _token.transferFrom(msg.sender, _owner, _PRICE);
         emit Calculated("Substraction", msg.sender, nb1, nb2, nb1 - nb2);
         return nb1 - nb2;
     }
 
-    function mul(int256 nb1, int256 nb2) public paymentValue returns (int256) {
+    function mul(int256 nb1, int256 nb2) public payPerCalculate returns (int256) {
         _token.transferFrom(msg.sender, _owner, _PRICE);
         emit Calculated("Multiplication", msg.sender, nb1, nb2, nb1 * nb2);
         return nb1 * nb2;
     }
 
-    function div(int256 nb1, int256 nb2) public paymentValue returns (int256) {
+    function div(int256 nb1, int256 nb2) public payPerCalculate returns (int256) {
         require(nb2 != 0, "Calculator: can not divide by zero");
         _token.transferFrom(msg.sender, _owner, _PRICE);
         emit Calculated("Division", msg.sender, nb1, nb2, nb1 / nb2);
         return nb1 / nb2;
     }
 
-    function mod(int256 nb1, int256 nb2) public paymentValue returns (int256) {
-        require(nb2 != 0, "Calculator: can not modulus by zero");
+    function mod(int256 nb1, int256 nb2) public payPerCalculate returns (int256) {
+        require(nb2 != 0, "Calculator: can not be modulo by zero");
         _token.transferFrom(msg.sender, _owner, _PRICE);
-        emit Calculated("Modulus", msg.sender, nb1, nb2, nb1 % nb2);
+        emit Calculated("Modulo", msg.sender, nb1, nb2, nb1 % nb2);
         return nb1 % nb2;
     }
 

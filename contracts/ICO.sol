@@ -16,6 +16,7 @@ contract ICO is Ownable {
 
     IToken private _token;
     uint256 private _endOfIco;
+    uint256 private _supplyInSale;
 
     constructor(address tokenAddress) {
         _token = IToken(tokenAddress);
@@ -27,14 +28,14 @@ contract ICO is Ownable {
     event Withdrew(address indexed owner_, uint256 amount);
 
     /**
-     * @dev used to receive ether directly send from a transaction
+     * @dev Used to receive ether directly send from a transaction
      * */
     receive() external payable {
         _buyToken(msg.sender, msg.value);
     }
 
     /**
-     * @dev used by the owner of the Token contract, the owner can withdraw
+     * @dev Used by the owner of the Token contract, the owner can withdraw
      * all the ethers sent by the buyers in the ICO contract.
      * But, he have to wait the end of the ICO period (2 weeks)
      */
@@ -50,10 +51,24 @@ contract ICO is Ownable {
     }
 
     /**
-     * @dev used to buy erc20 Token "TT" using ether
+     * @dev Used to buy erc20 Token "TT" using ether
      */
     function buyTokens() public payable {
         _buyToken(msg.sender, msg.value);
+    }
+
+    /**
+     * @return Address of Token "TT" contract
+     */
+    function tokenContract() public view returns (address) {
+        return address(_token);
+    }
+
+    /**
+     * @return Total of the supply in sale
+     */
+    function supplyInSale() public view returns (uint256) {
+        return _supplyInSale;
     }
 
     /**
@@ -64,7 +79,7 @@ contract ICO is Ownable {
     }
 
     /**
-     * @return number of token "TT" sold by this ICO
+     * @return Number of token "TT" sold by this ICO
      */
     function tokenSold() public view returns (uint256) {
         return ConvertGweiToToken(ICOBalance()) / 10**18;
@@ -73,19 +88,20 @@ contract ICO is Ownable {
     /**
      * @dev Exchange rate 1 gwei = 1 token "TT"
      * @param amount in Ether
-     * @return value in "TT"
+     * @return Value in "TT"
      */
     function ConvertGweiToToken(uint256 amount) public pure returns (uint256) {
         return amount * 10**9;
     }
 
     /**
-     * @dev this function allows the ICO contract to give in exchange of ethers TokenToken TT to buyers
+     * @dev This function allows the ICO contract to give in exchange of ethers TokenToken TT to buyers
      * If the last buyer send more ethers than this contract can sell, he got the difference refund.
      * @param sender the buyer
      * @param amount in ether
      */
     function _buyToken(address sender, uint256 amount) private {
+        require(msg.sender != _token.owner(), "ICO: owner cannot buy his tokens");
         require(block.timestamp < _endOfIco, "ICO: Sorry ! The ICO is over, you can no longer buy token");
         uint256 allowance = _token.allowance(_token.owner(), address(this));
         require(allowance > 0, "ICO: has not been approved yet or all token are already sold");
