@@ -15,9 +15,16 @@ describe('Calculator', () => {
     await calculator.deployed();
   });
 
-  /* describe('Deployment', function () {
+  describe('Deployment', function () {
     it('Should return the price to use calculator function', async function () {
       expect(await calculator.price()).to.equal(ethers.utils.parseEther('1'));
     });
   });
-}); */
+
+  describe('Add', function () {
+    it('should return the right result', async function () {
+      await expect(calculator.add(2, 3)).to.emit(calculator, 'Calculated').withArgs('Add', dev.address, 2, 3, 5);
+      await expect(calculator.add(-2, 3)).to.emit(calculator, 'Calculated').withArgs('Add', dev.address, -2, 3, 1);
+    });
+  });
+});
